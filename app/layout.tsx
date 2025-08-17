@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   description:
     "Premium bottled water delivery service. Order fresh, pure water online with same-day delivery. Family-owned business serving the community.",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.png", // <-- place your favicon.png in the public folder
+  },
 };
 
 export default function RootLayout({
