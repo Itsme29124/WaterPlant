@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-}
+  experimental: {
+    serverActions: {}, // use object instead of boolean
+  },
+  output: "standalone", // for server runtime
+};
 
-export default nextConfig
+export default nextConfig;

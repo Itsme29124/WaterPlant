@@ -49,7 +49,6 @@ export function ContactForm() {
       setProduct("");
       setDeliveryPreference("");
     } catch (error) {
-      // Even if it fails, still show confirmation
       setMessage(
         "✅ Thank you! Your order has been received. We'll contact you shortly."
       );
@@ -71,7 +70,7 @@ export function ContactForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-          {/* Name, Phone, Email, Address */}
+          {/* Name & Phone */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name *</Label>
@@ -96,6 +95,7 @@ export function ContactForm() {
             </div>
           </div>
 
+          {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email">Email Address *</Label>
             <Input
@@ -108,6 +108,7 @@ export function ContactForm() {
             />
           </div>
 
+          {/* Address */}
           <div className="space-y-2">
             <Label htmlFor="address">Delivery Address *</Label>
             <Textarea
