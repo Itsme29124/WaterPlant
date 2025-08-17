@@ -6,6 +6,10 @@ import { Resend } from "resend";
 if (!process.env.RESEND_API_KEY) {
   throw new Error("RESEND_API_KEY is not defined in your .env");
 }
+if (!process.env.RESEND_FROM_EMAIL || !process.env.RESEND_TO_EMAIL) {
+  throw new Error("RESEND_FROM_EMAIL or RESEND_TO_EMAIL is not defined in your .env");
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 interface ContactFormData {
@@ -20,28 +24,23 @@ interface ContactFormData {
 }
 
 export async function submitContactForm(formData: FormData) {
+  const data: ContactFormData = {
+    name: (formData.get("name") || "").toString(),
+    phone: (formData.get("phone") || "").toString(),
+    email: (formData.get("email") || "").toString(),
+    address: (formData.get("address") || "").toString(),
+    product: (formData.get("product") || "").toString(),
+    quantity: (formData.get("quantity") || "").toString(),
+    deliveryPreference: (formData.get("deliveryPreference") || "").toString() || undefined,
+    message: (formData.get("message") || "").toString() || undefined,
+  };
+
   try {
-    const data: ContactFormData = {
-      name: (formData.get("name") || "").toString(),
-      phone: (formData.get("phone") || "").toString(),
-      email: (formData.get("email") || "").toString(),
-      address: (formData.get("address") || "").toString(),
-      product: (formData.get("product") || "").toString(),
-      quantity: (formData.get("quantity") || "").toString(),
-      deliveryPreference: (formData.get("deliveryPreference") || "").toString(),
-      message: (formData.get("message") || "").toString(),
-    };
-
-    // Send Email (ignore failure, always return success)
-    sendEmailNotification(data).catch((err) => {
-      console.error("Email sending failed but ignoring:", err);
-    });
-
-    // Always return success
+    await sendEmailNotification(data);
     return { success: true };
   } catch (error) {
-    console.error("Contact form submission error:", error);
-    return { success: true }; // Force success
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email. Please try again later.");
   }
 }
 

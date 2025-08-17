@@ -25,6 +25,7 @@ import { submitContactForm } from "@/app/actions/contact";
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const [product, setProduct] = useState("");
   const [deliveryPreference, setDeliveryPreference] = useState("");
@@ -32,6 +33,8 @@ export function ContactForm() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsSubmitting(true);
+    setMessage("");
+    setError("");
 
     const formData = new FormData(e.currentTarget);
     formData.set("product", product);
@@ -39,19 +42,21 @@ export function ContactForm() {
 
     try {
       await submitContactForm(formData);
-
       setMessage(
         "✅ Thank you! Your order has been received. We'll contact you shortly."
       );
 
-      // Reset form
-      e.currentTarget.reset();
+      // Safe form reset
+      if (e.currentTarget) {
+        e.currentTarget.reset();
+      }
+
+      // Reset select states
       setProduct("");
       setDeliveryPreference("");
-    } catch (error) {
-      setMessage(
-        "✅ Thank you! Your order has been received. We'll contact you shortly."
-      );
+    } catch (err) {
+      console.error(err);
+      setError("❌ Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -95,7 +100,7 @@ export function ContactForm() {
             </div>
           </div>
 
-          {/* Email */}
+          {/* Email & Address */}
           <div className="space-y-2">
             <Label htmlFor="email">Email Address *</Label>
             <Input
@@ -107,8 +112,6 @@ export function ContactForm() {
               placeholder="Enter your email"
             />
           </div>
-
-          {/* Address */}
           <div className="space-y-2">
             <Label htmlFor="address">Delivery Address *</Label>
             <Textarea
@@ -182,7 +185,7 @@ export function ContactForm() {
             </Select>
           </div>
 
-          {/* Notes */}
+          {/* Additional Notes */}
           <div className="space-y-2">
             <Label htmlFor="message">Additional Notes</Label>
             <Textarea
@@ -193,7 +196,7 @@ export function ContactForm() {
             />
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
@@ -204,8 +207,9 @@ export function ContactForm() {
             )}
           </Button>
 
-          {/* Status */}
+          {/* Status Messages */}
           {message && <div className="text-green-700 mt-2">{message}</div>}
+          {error && <div className="text-red-700 mt-2">{error}</div>}
         </form>
       </CardContent>
     </Card>
